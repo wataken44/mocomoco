@@ -1,0 +1,25 @@
+{
+  "EntryCountPerRequest" : 20,
+  "Plugin" : [
+    { 
+      "name" : "SampleDebug",
+      "plugin" : "DebugPlugin",
+      "param" : { "Enable" : "false" }
+    },
+    {
+      "name" : "Lingr",
+      "plugin" : "LingrPlugin",
+      "param" : { "Room" : "wataken44", "ProfileSuffix" : "moco" }
+    },
+    {
+      "name" : "IrcPlugin",
+      "plugin" : "IrcPlugin",
+      "param" : { "Server" : "127.0.0.1", "Channel" : "GoogleReader" }      
+    }
+  ],
+  "ProfileSuffix" : "moco",
+  "QueueDepth" : 512,
+  "ReconnectIntervalSec" : 1800,
+  "RequestIntervalSec" : 5,
+  "RunIntervalSec" : 600
+}
