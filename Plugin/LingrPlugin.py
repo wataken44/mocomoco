@@ -43,8 +43,10 @@ class LingrPlugin(object):
         msg = msg.encode('UTF-8')
         ret = self.__lingr.Say(self.__room, msg)
         if ('status' not in ret) or (ret['status'] != 'ok'):
+            # retry...
             print(ret)
             print(self.__lingr.CreateSession())
+            print(self.__lingr.Say(self.__room, msg))
 
 class LingrThread(Thread):
     def __init__(self, lingr):
