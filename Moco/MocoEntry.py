@@ -31,9 +31,13 @@ class MocoEntry(object):
     def id(self):
         return self.__id
 
-    @property
-    def link(self):
+    def GetLink(self):
         return self.__link
+
+    def SetLink(self, link):
+        self.__link = link
+
+    link = property(GetLink, SetLink)
 
     @property
     def title(self):

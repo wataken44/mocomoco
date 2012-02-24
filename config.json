@@ -1,10 +1,20 @@
 {
   "EntryCountPerRequest" : 20,
   "Plugin" : [
+    {
+      "name" : "Redirect",
+      "plugin" : "RedirectPlugin",
+      "param" : {}
+    },
+    {
+      "name" : "Bitly",
+      "plugin" : "BitlyPlugin",
+      "param" : { "ProfileSuffix" : "moco" }      
+    },
     { 
       "name" : "SampleDebug",
       "plugin" : "DebugPlugin",
-      "param" : { "Enable" : "false" }
+      "param" : { "Enable" : "true" }
     },
     {
       "name" : "Lingr",
