@@ -14,7 +14,7 @@ import time
 import urllib
 import urllib2
 
-from threading import Thread
+from threading import Thread, Lock
 
 from pit import Pit
 
@@ -42,7 +42,7 @@ class LingrPlugin(object):
         msg = "[%s] %s %s" % (entry.sourceTitle, entry.title, entry.link)        
         msg = msg.encode('UTF-8')
         ret = self.__lingr.Say(self.__room, msg)
-        if ('status' not in ret) or (ret['status'] != 'ok'):
+        if (ret is None) or ('status' not in ret) or (ret['status'] != 'ok'):
             # retry...
             print(ret)
             print(self.__lingr.CreateSession())
@@ -67,7 +67,7 @@ class LingrThread(Thread):
     def run(self):
         while(True):
             data = self.__lingr.VerifySession()
-            if ('status' not in data) or (data['status'] != 'ok'):
+            if (data is None) or ('status' not in data) or (data['status'] != 'ok'):
                 self.__lingr.CreateSession()
             time.sleep(245)
             if self.__finished:
@@ -92,6 +92,7 @@ class Lingr(object):
 
         self.__opener = urllib2.build_opener()
         self.__opener.addheaders = [('User-agent', 'Moco Lingr Client(twitter.com/wataken44)')]
+        self.__lock = Lock()
 
     @property
     def user(self):
@@ -121,7 +122,19 @@ class Lingr(object):
     def counter(self):
         return self.__counter
 
+    @property
+    def lock(self):
+        return self.__lock
+
+    def _Lock(self):
+        self.lock.acquire()
+
+    def _Unlock(self):
+        self.lock.release()
+
     def _Update(self, data):
+        if data is None:
+            return
         if ('status' not in data) or (data['status'] != 'ok'):
             return
         if 'session' in data:
@@ -130,69 +143,84 @@ class Lingr(object):
             self.__nickname = data['nickname']
 
     def CreateSession(self):
+        self._Lock()
         data = self._Post('session/create', {
                 'user': self.user,
                 'password': self.password,
                 'app_key': self.appKey
             })
         self._Update(data)
+        self._Unlock()
         return data
 
     def VerifySession(self):
+        self._Lock()
         data = self._Post('session/verify', {
                 'session': self.session,            
                 'app_key': self.appKey
                 })
         self._Update(data)
+        self._Unlock()
         return data
 
     def GetRooms(self):
+        self._Lock()
         data = self._Get('user/get_rooms', { 'session': self.session })
+        self._Unlock()
         return data
 
-    def ShowRoom(self):
-        pass
-
     def Say(self, room, text):
+        self._Lock()
         data = self._Post('room/say', {
                 'session': self.session,
                 'room': room,
                 'nickname': self.nickname,
                 'text': text})
+        self._Unlock()
         return data
 
     def SubscribeRoom(self, room, reset='true'):
+        self._Lock()
         data = self._Post('room/subscribe', {
                 'session': self.session,
                 'room': room,
                 'reset': reset})
-        if 'counter' in data:
+        self._Unlock()
+        if data is not None and 'counter' in data:
             self.__counter = data['counter']
         return data
 
     def ObserveEvent(self):
+        self._Lock()
         data = self._Get('event/observe', {
                 'session': self.session,
                 'counter': self.counter})
+        self._Unlock()
 
-        if 'counter' in data:
+        if data is not None and 'counter' in data:
             self.__counter = data['counter']
         return data
 
     def _Post(self, path, param):
-        handler = self.opener.open(self._GetUrl(path), urllib.urlencode(param))
-        ret = handler.read()
-        handler.close()
-        return json.loads(ret)
+        try:
+            fp = self.opener.open(self._GetUrl(path), urllib.urlencode(param))
+            ret = fp.read()
+            fp.close()
+            return json.loads(ret)
+        except:
+            return None
 
     def _Get(self, path, param = None):
         url = self._GetUrl(path)
         if param is not None:
             url += "?" + urllib.urlencode(param)
-        handler = self.opener.open(url)
-        ret = handler.read()
-        handler.close()
-        return json.loads(ret)
+        try:
+            fp = self.opener.open(url)
+            ret = fp.read()
+            fp.close()
+            return json.loads(ret)
+        except:
+            return None
         
     def _GetUrl(self, path):
         url = self.__URL_BASE
