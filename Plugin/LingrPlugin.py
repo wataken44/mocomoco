@@ -231,15 +231,19 @@ class Lingr(object):
 PLUGIN = LingrPlugin
 
 def LingrPluginDebug():
-    lingr = Lingr('', '', '')
+    account = Pit.get('moco-lingr-plugin-moco',
+                      {'require' : {'User': '', 'Password': '', 'AppKey' : ''}})
+
+    lingr = Lingr(account['User'], account['Password'], account['AppKey'])
     lingr.CreateSession()
-    room = 'wataken44.google_reader'
+    room = 'w5ngr'
     
     for i in range(90):
         ret = lingr.VerifySession()
         msg = "verify %d:" % i + str(ret)
         print msg
-        #lingr.Say(room, msg)
+        print lingr.Say(room, msg)
+        print lingr.Say(room, "a")
         time.sleep(60)
 
 if __name__ == "__main__":

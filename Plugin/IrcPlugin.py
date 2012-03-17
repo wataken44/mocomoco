@@ -68,7 +68,7 @@ class IrcPlugin(object):
                     if(len(tmp.encode("utf-8")) < 480):
                         break
                 buf = tmp
-            
+
             self.__bot.notice(self.__channel, buf.encode('utf-8'))
 
 class TwistedThread(Thread):
