@@ -22,22 +22,26 @@ class BitlyPlugin(object):
     def Initialize(self, runner, name, param):
         self.__name = name
         
-        suffix = param['ProfileSuffix']
+        self.InitializeAccount(param['ProfileSuffix'])
 
+        runner.AddEnqueHook(self.Enque)
+
+    def InitializeAccount(self, suffix):
         account = Pit.get('moco-bitly-plugin-' + suffix,
                           {'require' : {'Login': '', 'ApiKey' : ''}})
 
         self.__login = account['Login']
         self.__apiKey = account['ApiKey']
-
-        runner.AddEnqueHook(self.Enque)
-
+        
     def Enque(self, entry):
+        entry.link = self.Shorten(entry.link)
+
+    def Shorten(self, link):
         param = {
             "format" : "json",
             "login" : self.__login,
             "apiKey" : self.__apiKey,
-            "longUrl" : entry.link,
+            "longUrl" : link,
             "domain" : "j.mp"
             }
         url = self.__URL_BASE + self.__API_PATH_SHORTEN
@@ -52,9 +56,11 @@ class BitlyPlugin(object):
 
         if ret:
             if ret['status_txt'] == 'OK':
-                entry.link = ret['data']['url']
+                return ret['data']['url']
             else:
                 print ret
+
+        return link
 
 PLUGIN = BitlyPlugin
 
