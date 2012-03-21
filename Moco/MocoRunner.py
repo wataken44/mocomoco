@@ -193,7 +193,7 @@ class MocoRunner(object):
             self.__requestTimer.Tick()
             
             startTime = self.__lastTimestampMsec / 1000
-            
+
             feed = self.api.GetAtomByState(
                 "reading-list",
                 entryCount,
@@ -232,13 +232,15 @@ class MocoRunner(object):
 
     def _Add(self, entry):
         self._Enque(entry)
+
         self.__queue.append(entry)
 
         if not self._Filter(entry):
             self._Process(entry)
 
         if len(self.__queue) > self.queueDepth:
-            self._Deque(self.__queue.pop(0))
+            front = self.__queue.pop(0)
+            self._Deque(front)
 
     def _Enque(self, entry):
         for function in self.__enqueHook:

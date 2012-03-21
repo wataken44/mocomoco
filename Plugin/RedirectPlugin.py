@@ -24,6 +24,8 @@ class RedirectPlugin(object):
 
     def Initialize(self, runner, name, param):
         self.__name = name
+        self.__maxRedirectCount = 5
+
         if 'MaxRedirectCount' in param:
             self.__maxRedirectCount = param['MaxRedirectCount']
 
@@ -45,17 +47,24 @@ class RedirectPlugin(object):
                 self.__redirect[ut.netloc] = False
 
     def _Traverse(self, link):
-        while True:
+        for i in range(self.__maxRedirectCount):
             res = self._GetHead(link)
             if res is not None and (res.status == 301 or res.status == 302):
-                loc = res.getheader('location')
+                # if moved or found, traverse location
+                loc = res.getheader('location', link)
                 ut = urlparse.urlparse(loc)
                 if ut.netloc == '':
-                    link = urlparse.urljoin(link, loc)
+                    # relative
+                    nx = urlparse.urljoin(link, loc)
                 else:
-                    link = loc
+                    nx = loc
+                if nx == link:
+                    return link
+                else:
+                    link = nx
             else:
                 return link
+        return link
 
     def _GetHead(self, link):
         ut = urlparse.urlparse(link)
