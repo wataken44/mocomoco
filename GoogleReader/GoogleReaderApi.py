@@ -10,6 +10,7 @@ import calendar
 import json
 import re
 import time
+import urllib
 
 from datetime import datetime, timedelta
 from gdata.service import GDataService, Query
@@ -88,6 +89,29 @@ class GoogleReaderApi(object):
         feed = self.__service.Get(query.ToUri(), converter = lambda x:x)
 
         return feed
+
+    def PostEditTag(self, id,
+                    add='user/-/state/com.google/read', remove=None,
+                    action='edit'):
+        params = {
+            'i' : id,
+            'ac' : 'edit',
+            'T' : self.__token
+            }
+        if add is not None:
+            params['a'] = add
+        elif remove is not None:
+            params['r'] = remove
+
+        uri = '/reader/api/0/edit-tag'
+        extra_headers={'Content-Type': 'application/x-www-form-urlencoded'}
+
+        ret = self.__service.Post(
+            urllib.urlencode(params), uri,
+            converter = lambda x:x,
+            extra_headers=extra_headers)
+        
+        return ret
 
     def CreateTimestamp(self, date):
         return str(self.GetTimestampFromDate(date))

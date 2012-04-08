@@ -25,6 +25,11 @@
       "name" : "IrcPlugin",
       "plugin" : "IrcPlugin",
       "param" : { "Server" : "127.0.0.1", "Channel" : "GoogleReader" }      
+    },
+    { 
+      "name" : "AutoRead",
+      "plugin" : "AutoReadPlugin",
+      "param" : { "Enable" : "true", "Timing" : "Deque" }
     }
   ],
   "ProfileSuffix" : "moco",
