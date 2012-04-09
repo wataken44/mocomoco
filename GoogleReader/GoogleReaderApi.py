@@ -105,12 +105,20 @@ class GoogleReaderApi(object):
 
         uri = '/reader/api/0/edit-tag'
         extra_headers={'Content-Type': 'application/x-www-form-urlencoded'}
-
-        ret = self.__service.Post(
-            urllib.urlencode(params), uri,
-            converter = lambda x:x,
-            extra_headers=extra_headers)
         
+        try:
+            ret = self.__service.Post(
+                urllib.urlencode(params), uri,
+                converter = lambda x:x,
+                extra_headers=extra_headers)
+        except gdata.service.RequestError, err:
+            print err.status
+            print err.reason
+            print err.body
+            print id
+            print add
+            print self.__token
+
         return ret
 
     def CreateTimestamp(self, date):

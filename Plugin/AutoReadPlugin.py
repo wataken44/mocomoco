@@ -39,9 +39,11 @@ class AutoReadPlugin(object):
 
     def _Read(self, entry):
         id = entry.id
-        
-        ret = self.__api.PostEditTag(id, add='user/-/state/com.google/read')
-        print ret
+        try:
+            ret = self.__api.PostEditTag(id, add='user/-/state/com.google/read')
+            # print "read %s %s" % (id, ret)
+        except:
+            print id, ret
 
 PLUGIN=AutoReadPlugin
 
