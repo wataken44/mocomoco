@@ -45,13 +45,13 @@ class AutoReadPlugin(object):
         id = entry.id
         try:
             if self.__debug:
-                print "AutoPluginEdit: " + str(entry)        
+                print u"AutoPluginEdit: " + str(entry)        
             ret = self.__api.PostEditTag(id, add='user/-/state/com.google/read')
 
             if self.__debug:
-                print "AutoPluginRead: " + str(entry)        
+                print u"AutoPluginRead: " + str(entry)        
         except:
-            print "AutoPluginError: " + str(entry)        
+            print u"AutoPluginError: " + str(entry)        
 
             
 
