@@ -6,6 +6,8 @@
 
 """
 
+import codecs
+
 class DebugPlugin(object):
     def __init__(self):
         self.__name = ''
@@ -29,7 +31,8 @@ class DebugPlugin(object):
         return False
 
     def Process(self, entry):
-        print "%d <%s> [%s] %s %s" % (entry.crawlTimestampMsec, entry.id, entry.sourceTitle, entry.title, entry.link)        
+        s = str(entry)
+        print s.decode('utf-8')
 
     def Deque(self, entry):
         pass

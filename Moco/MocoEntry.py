@@ -6,6 +6,11 @@
 Moco Entry for an article
 """
 
+
+import codecs
+
+from datetime import datetime
+
 class MocoEntry(object):
     def __init__(self, id, link, title, published, content,
                  sourceTitle, sourceLink, crawlTimestampMsec):
@@ -26,6 +31,17 @@ class MocoEntry(object):
             return cmp(self.__id, other.id)
         else:
             return cmp(self.__crawlTimestampMsec, other.crawlTimestampMsec)
+
+    def __str__(self):
+        ret = self.id + " " + str(self.crawlTimestampMsec) + " " + datetime(*self.published[0:6]).isoformat() + " "
+
+        ret = ret.encode('utf-8') + self.sourceTitle.encode('utf-8')
+        ret += " "
+        ret += self.title.encode('utf-8')
+        ret += " "
+        ret += self.link.encode('utf-8')
+        
+        return ret
 
     @property
     def id(self):

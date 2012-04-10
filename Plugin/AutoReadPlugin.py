@@ -23,6 +23,10 @@ class AutoReadPlugin(object):
         if 'Timing' in param and param['Timing'] == 'Enque':
             self.__readAtDeque = False
 
+        self.__debug = False
+        if 'Debug' in param and param['Debug'] == 'true':
+            self.__debug = True
+
         if self.__enable:
             if self.__readAtDeque:
                 runner.AddDequeHook(self.Deque)
@@ -40,10 +44,16 @@ class AutoReadPlugin(object):
     def _Read(self, entry):
         id = entry.id
         try:
+            if self.__debug:
+                print "AutoPluginEdit: " + str(entry)        
             ret = self.__api.PostEditTag(id, add='user/-/state/com.google/read')
-            # print "read %s %s" % (id, ret)
+
+            if self.__debug:
+                print "AutoPluginRead: " + str(entry)        
         except:
-            print id, ret
+            print "AutoPluginError: " + str(entry)        
+
+            
 
 PLUGIN=AutoReadPlugin
 

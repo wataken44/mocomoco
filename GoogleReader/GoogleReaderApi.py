@@ -112,12 +112,10 @@ class GoogleReaderApi(object):
                 converter = lambda x:x,
                 extra_headers=extra_headers)
         except gdata.service.RequestError, err:
-            print err.status
-            print err.reason
-            print err.body
-            print id
-            print add
-            print self.__token
+            msg = [str(id), str(add), str(token),
+                   str(err[0].status), str(err[0].reason), str(err[0].body)]
+            print "\n".join(msg)
+            raise
 
         return ret
 
