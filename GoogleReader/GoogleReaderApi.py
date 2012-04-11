@@ -34,9 +34,7 @@ class GoogleReaderApi(object):
         # login
         self.__service.ClientLogin(email, password)
         # get token
-        self.__token = self.__service.Get(
-            '/reader/api/0/token',
-            converter=lambda x:x)
+        self.GetToken()
         
         # get user id
         # ugly way... is there any API?
@@ -51,11 +49,14 @@ class GoogleReaderApi(object):
     def Reconnect(self):
         self.Connect(self.__email, self.__password)
 
-    def GetToken(self):
-        return self.__token
-
     def GetUserId(self):
         return self.__userId
+
+    def GetToken(self):
+        self.__token = self.__service.Get(
+            '/reader/api/0/token',
+            converter=lambda x:x)
+        return self.__token
 
     def GetTagList(self):
         query = Query(feed='/reader/api/0/tag/list',
@@ -106,17 +107,17 @@ class GoogleReaderApi(object):
         uri = '/reader/api/0/edit-tag'
         extra_headers={'Content-Type': 'application/x-www-form-urlencoded'}
         
-        try:
-            ret = self.__service.Post(
-                urllib.urlencode(params), uri,
-                converter = lambda x:x,
-                extra_headers=extra_headers)
-        except gdata.service.RequestError, err:
-            print "An Error occured %s" % id
-            msg = [str(id), str(add), str(token),
-                   str(err[0].status), str(err[0].reason), str(err[0].body)]
-            print "\n".join(msg)
-            raise
+        #try:
+        ret = self.__service.Post(
+            urllib.urlencode(params), uri,
+            converter = lambda x:x,
+            extra_headers=extra_headers)
+        #except gdata.service.RequestError, err:
+        #    print "An Error occured %s" % id
+        #    msg = [str(id), str(add), str(token),
+        #           str(err[0].status), str(err[0].reason), str(err[0].body)]
+        #    print "\n".join(msg)
+        #    raise
 
         return ret
 

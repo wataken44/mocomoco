@@ -32,7 +32,8 @@ class MocoRunner(object):
             'QueueDepth' : 512,
             'ReconnectIntervalSec' : 1800,
             'RequestIntervalSec' : 5,
-            'RunIntervalSec' : 600
+            'RunIntervalSec' : 600,
+            'UpdateTokenIntervalSec' : 1200
             }
         self.__api = None
         self.__offset = 0
@@ -150,6 +151,7 @@ class MocoRunner(object):
         self.__runTimer = MocoTimer()
         self.__requestTimer = MocoTimer()
         self.__reconnectTimer = MocoTimer()
+        self.__updateTokenTimer = MocoTimer()
 
         ago = datetime.utcnow() - timedelta(0, self.__offset)
         self.__lastTimestampMsec = self.api.GetTimestampFromDate(ago) * 1000
@@ -171,6 +173,12 @@ class MocoRunner(object):
         
         while True:
             self.__runTimer.Tick()
+
+            tokenLifeTime = int(ceil(self.__updateTokenTimer.Get()))
+            if tokenLifeTime > self.updateTokenIntervalSec:
+                # update token
+                self.api.GetToken()
+                self.__updateTokenTimer.Tick()
 
             # issue request
             self._Request()
