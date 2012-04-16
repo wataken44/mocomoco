@@ -69,8 +69,9 @@ class RedirectPlugin(object):
     def _GetHead(self, link):
         ut = urlparse.urlparse(link)
 
-        con = HTTPConnection(ut.netloc)
+        con = HTTPConnection(ut.netloc, timeout=8)
         res = None
+
         try:
             path = ut.path
             if ut.params != '':
@@ -94,7 +95,7 @@ def RedirectPluginTest():
         def __init__(self, link):
             self.link = link
 
-    links = ["http://feeds.wired.com/~r/wired/index/~3/9Gl5lJNbgvM/", "http://www.4gamer.net/games/038/G003857/20120223012/", "http://distrowatch.com/7125"]
+    links = ["http://feeds.wired.com/~r/wired/index/~3/9Gl5lJNbgvM/", "http://www.4gamer.net/games/038/G003857/20120223012/", "http://distrowatch.com/7125", "http://www.wagnaria.com/product/2nd_bddvd_event.html"]
 
     for link in links:
         entry = DummyEntry(link)
