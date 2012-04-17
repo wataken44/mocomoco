@@ -164,8 +164,6 @@ class MocoBot(irc.IRCClient):
     nickname = "moco"
 
     def __init__(self, channel, queue):
-        #irc.IRCClient.__init__(self)
-
         self.__channel = channel
         self.__queue = queue
         
@@ -192,6 +190,7 @@ class MocoBotFactory(protocol.ClientFactory):
     def clientConnectionLost(self, connector, reason):
         """If we get disconnected, reconnect to server."""
         print "connection lost:", reason
+        time.sleep(10)
         connector.connect()
 
     def clientConnectionFailed(self, connector, reason):
