@@ -48,11 +48,14 @@ class BitlyPlugin(object):
         url += "?" + urllib.urlencode(param)
 
         ret = None
-        try:
-            fp = urllib2.urlopen(url, timeout = 3)
-            ret = json.loads(fp.read())
-        except:
-            pass
+        for i in range(5):
+            try:
+                fp = urllib2.urlopen(url, timeout = 8)
+                ret = json.loads(fp.read())
+            except:
+                pass
+            if ret is not None:
+                break
 
         if ret:
             if ret['status_txt'] == 'OK':
