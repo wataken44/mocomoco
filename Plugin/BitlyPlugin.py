@@ -49,7 +49,7 @@ class BitlyPlugin(object):
 
         ret = None
         try:
-            fp = urllib.urlopen(url)
+            fp = urllib2.urlopen(url, timeout = 3)
             ret = json.loads(fp.read())
         except:
             pass
